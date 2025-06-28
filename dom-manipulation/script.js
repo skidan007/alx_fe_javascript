@@ -1,12 +1,23 @@
-// Array to store quotes
-let quotes = [
-  { text: "The best way to predict the future is to create it.", category: "Motivation" },
-  { text: "Life is what happens when you're busy making other plans.", category: "Life" },
-  { text: "Do not be afraid to give up the good to go for the great.", category: "Success" }
-];
+let quotes = [];
 
-// Initialize the application
+// === Load Quotes From Local Storage ===
+function loadQuotes() {
+  const storedQuotes = localStorage.getItem("quotes");
+  quotes = storedQuotes ? JSON.parse(storedQuotes) : [
+    { text: "The best way to predict the future is to create it.", category: "Motivation" },
+    { text: "Life is what happens when you're busy making other plans.", category: "Life" },
+    { text: "Do not be afraid to give up the good to go for the great.", category: "Success" }
+  ];
+}
+
+// === Save Quotes To Local Storage ===
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
+
+// === Initialize App ===
 function initQuoteApp() {
+  loadQuotes();
   createCategoryDropdown();
   createAddQuoteForm();
   showRandomQuote();
@@ -14,7 +25,7 @@ function initQuoteApp() {
   document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 }
 
-// Create the category dropdown dynamically
+// === Create Dropdown ===
 function createCategoryDropdown() {
   const categorySelect = document.getElementById("categorySelect");
   categorySelect.innerHTML = '<option value="all">All</option>';
@@ -28,7 +39,7 @@ function createCategoryDropdown() {
   });
 }
 
-// Display a random quote based on selected category
+// === Show Random Quote & Save to Session Storage ===
 function showRandomQuote() {
   const selectedCategory = document.getElementById("categorySelect").value;
   const filtered = selectedCategory === "all"
@@ -43,10 +54,13 @@ function showRandomQuote() {
   }
 
   const randomIndex = Math.floor(Math.random() * filtered.length);
-  display.textContent = filtered[randomIndex].text;
+  const selectedQuote = filtered[randomIndex].text;
+
+  display.textContent = selectedQuote;
+  sessionStorage.setItem("lastQuote", selectedQuote); // session data
 }
 
-// Create the form dynamically to add new quotes
+// === Create Add Quote Form Dynamically ===
 function createAddQuoteForm() {
   const formContainer = document.createElement("div");
 
@@ -71,7 +85,7 @@ function createAddQuoteForm() {
   document.body.appendChild(formContainer);
 }
 
-// Add a new quote from form input
+// === Add Quote + Save to Local Storage ===
 function addQuote() {
   const text = document.getElementById("newQuoteText").value.trim();
   const category = document.getElementById("newQuoteCategory").value.trim();
@@ -82,14 +96,49 @@ function addQuote() {
   }
 
   quotes.push({ text, category });
+  saveQuotes();
+  createCategoryDropdown(); // refresh categories
+  showRandomQuote();
 
-  // Clear inputs
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
-
-  createCategoryDropdown(); // Update dropdown with new category if needed
-  showRandomQuote();
 }
 
-// Start the app after DOM loads
+// === Export Quotes as JSON File ===
+function exportToJsonFile() {
+  const dataStr = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "quotes.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+// === Import Quotes from Uploaded JSON File ===
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function(e) {
+    try {
+      const importedQuotes = JSON.parse(e.target.result);
+      if (Array.isArray(importedQuotes)) {
+        quotes.push(...importedQuotes);
+        saveQuotes();
+        createCategoryDropdown();
+        showRandomQuote();
+        alert("Quotes imported successfully!");
+      } else {
+        alert("Invalid format: JSON must be an array of quote objects.");
+      }
+    } catch (err) {
+      alert("Error reading file: " + err.message);
+    }
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
+// === Launch App on Page Load ===
 document.addEventListener("DOMContentLoaded", initQuoteApp);
