@@ -1,35 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dynamic Quote Generator</title>
-</head>
-<body>
-  <h1>Dynamic Quote Generator</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Quote Generator</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 20px;
+      }
+      #quoteDisplay {
+        margin: 20px 0;
+        font-size: 1.2em;
+        border: 1px solid #eee;
+        padding: 15px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+      }
+      button {
+        padding: 10px 15px;
+        margin-right: 10px;
+        cursor: pointer;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      input[type="text"],
+      select {
+        padding: 8px;
+        margin-right: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .notification {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+      }
+      .error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+      #conflictResolution {
+        margin-top: 20px;
+        padding: 15px;
+        border: 1px solid #ffc107;
+        background-color: #fff3cd;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Dynamic Quote Generator</h1>
 
-  <label for="categorySelect">Choose a category for random quote:</label>
-  <select id="categorySelect">
-    <option value="all">All</option>
-  </select>
+    <label for="categorySelect">Choose a category for random quote:</label>
+    <select id="categorySelect">
+      <option value="all">All</option>
+    </select>
 
-  <div id="quoteDisplay" style="margin: 20px 0; font-size: 1.2em;"></div>
-  <button id="newQuote">Show New Quote</button>
+    <div id="quoteDisplay"></div>
+    <button id="newQuote">Show New Quote</button>
+    <button id="syncButton">Sync with Server</button>
 
-  <h3>Filter Quotes by Category</h3>
-  <select id="categoryFilter" onchange="filterQuotes()">
-    <option value="all">All Categories</option>
-  </select>
+    <div id="notificationArea"></div>
 
-  <ul id="filteredQuotesList"></ul>
+    <h3>Filter Quotes by Category</h3>
+    <select id="categoryFilter" onchange="filterQuotes()">
+      <option value="all">All Categories</option>
+    </select>
 
-  <h3>Add a New Quote</h3>
-  <!-- Created via JS -->
+    <ul id="filteredQuotesList"></ul>
 
-  <h3>Import / Export Quotes</h3>
-  <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
-  <button onclick="exportToJsonFile()">Export Quotes as JSON</button>
+    <h3>Add a New Quote</h3>
+    <h3>Import / Export Quotes</h3>
+    <input
+      type="file"
+      id="importFile"
+      accept=".json"
+      onchange="importFromJsonFile(event)"
+    />
+    <button onclick="exportToJsonFile()">Export Quotes as JSON</button>
 
-  <script src="script.js"></script>
-</body>
+    <div id="conflictResolution" style="display: none">
+      <h4>Conflict Detected!</h4>
+      <p>
+        Multiple updates found for the same quote. Please choose which version
+        to keep:
+      </p>
+      <div id="conflictOptions"></div>
+      <button onclick="resolveConflict()">Apply Selected</button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
 </html>
