@@ -48,7 +48,7 @@ function initQuoteApp() {
   startSyncInterval();
 
   document.getElementById("newQuote").addEventListener("click", showRandomQuote);
-  document.getElementById("syncButton").addEventListener("click", syncWithServer);
+  document.getElementById("syncButton").addEventListener("click", syncQuotes);
 }
 
 // === Create dropdown options for both selects ===
@@ -287,7 +287,7 @@ async function pushQuotesToServer(data) {
 }
 
 // === Data Syncing Logic ===
-async function syncWithServer() {
+async function syncQuotes() {
   showNotification("Initiating sync...", "info");
 
   // Step 1: Push local changes to server
@@ -351,7 +351,7 @@ async function syncWithServer() {
 
 // === Periodically sync with server ===
 function startSyncInterval() {
-  setInterval(syncWithServer, SYNC_INTERVAL);
+  setInterval(syncQuotes, SYNC_INTERVAL);
   showNotification(`Automatic sync enabled every ${SYNC_INTERVAL / 1000} seconds.`, "info");
 }
 
