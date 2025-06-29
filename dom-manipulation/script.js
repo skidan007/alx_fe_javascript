@@ -345,7 +345,8 @@ async function syncQuotes() {
   if (conflictQueue.length > 0) {
     displayConflicts();
   } else {
-    showNotification("Sync complete. All data is up to date.", "success");
+    // This is the new line you requested:
+    showNotification("Quotes synced with server!", "success");
   }
 }
 
